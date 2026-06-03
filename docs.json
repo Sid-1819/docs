@@ -47,15 +47,8 @@
   },
   "feedback": {
     "thumbsRating": true,
-    "raiseIssue": true
-  },
-  "integrations": {
-    "gtm": {
-      "tagId": "GTM-MKS4H4KC"
-    },
-    "telemetry": {
-      "enabled": true
-    }
+    "raiseIssue": true,
+    "suggestions": true
   },
   "contextual": {
     "options": [
