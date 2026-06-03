@@ -2,12 +2,20 @@
   var apiKey = "en_VYxbSw6TbZySXeBWmBKW97KgUNTnYjN4xyfqlP5wXzfMJGqEKG7tGhy3PnIVgjMxTJEHhvg6F1d_beb74374";
   var raiseIssueFormId = "encatch_raise_issue";
   var suggestEditFormId = "encatch_suggest_an_edit";
+  var helpfulFormId = "helpful_documentation_choice";
 
   function start() {
     window._encatch.init(apiKey);
     document.addEventListener(
       "click",
       function (e) {
+        if (e.target.closest("#feedback-thumbs-up, #feedback-thumbs-down")) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          window._encatch.showForm(helpfulFormId);
+          return;
+        }
+
         var a = e.target.closest("a");
         if (!a) return;
 
