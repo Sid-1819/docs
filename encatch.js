@@ -6,96 +6,32 @@
 
   var config = window.__ENCATCH_CONFIG__ || {};
   var apiKey = (config.apiKey || "").trim();
-  var raiseIssueFormId = (config.raiseIssueFormId || config.feedbackFormId || "").trim();
+  var formId = (config.raiseIssueFormId || "").trim();
 
-  if (!apiKey || !raiseIssueFormId) {
+  if (!apiKey || !formId) {
     return;
   }
 
   window._encatch.init(apiKey);
 
-  function openRaiseIssueForm() {
-    window._encatch.showForm(raiseIssueFormId);
-  }
-
-  function getFeedbackArea() {
-    var thumbsUp = document.getElementById("feedback-thumbs-up");
-    if (!thumbsUp) {
-      return null;
-    }
-
-    var pagination = document.getElementById("pagination");
-    if (pagination && pagination.previousElementSibling && pagination.previousElementSibling.contains(thumbsUp)) {
-      return pagination.previousElementSibling;
-    }
-
-    return (
-      thumbsUp.closest("feedback-toolbar") ||
-      thumbsUp.closest(".feedback-toolbar") ||
-      thumbsUp.parentElement
-    );
-  }
-
-  function isRaiseIssueControl(element) {
-    if (!element || !(element instanceof Element)) {
-      return false;
-    }
-
-    var control = element.closest("a, button");
-    if (!control) {
-      return false;
-    }
-
-    var feedbackArea = getFeedbackArea();
-    if (!feedbackArea || !feedbackArea.contains(control)) {
-      return false;
-    }
-
-    var label = (control.textContent || "").trim().toLowerCase();
-    var href = (control.getAttribute("href") || "").trim().toLowerCase();
-
-    return label.indexOf("raise issue") !== -1 || href.indexOf("/issues/new") !== -1;
-  }
-
-  function blockRaiseIssueNavigation(event) {
-    if (!isRaiseIssueControl(event.target)) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    openRaiseIssueForm();
-  }
-
-  function neutralizeRaiseIssueLinks() {
-    var feedbackArea = getFeedbackArea();
-    if (!feedbackArea) {
-      return;
-    }
-
-    var links = feedbackArea.querySelectorAll("a");
-    for (var i = 0; i < links.length; i++) {
-      var link = links[i];
-      var label = (link.textContent || "").trim().toLowerCase();
-      var href = (link.getAttribute("href") || "").trim().toLowerCase();
-
-      if (label.indexOf("raise issue") === -1 && href.indexOf("/issues/new") === -1) {
-        continue;
+  document.addEventListener(
+    "click",
+    function (event) {
+      var link = event.target.closest("a");
+      if (!link) {
+        return;
       }
 
-      link.removeAttribute("target");
-      link.setAttribute("href", "#");
-      link.dataset.encatchRaiseIssueBound = "true";
-    }
-  }
+      var label = (link.textContent || "").trim().toLowerCase();
+      var href = (link.getAttribute("href") || "").toLowerCase();
+      if (label.indexOf("raise issue") === -1 && href.indexOf("/issues/new") === -1) {
+        return;
+      }
 
-  document.addEventListener("click", blockRaiseIssueNavigation, true);
-  document.addEventListener("pointerdown", blockRaiseIssueNavigation, true);
-
-  neutralizeRaiseIssueLinks();
-  new MutationObserver(neutralizeRaiseIssueLinks).observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      window._encatch.showForm(formId);
+    },
+    true
+  );
 })();
