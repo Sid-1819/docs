@@ -14,42 +14,87 @@
 
   window._encatch.init(apiKey);
 
-  function bindRaiseIssueClick(element) {
-    if (!element || element.dataset.encatchRaiseIssueBound === "true") {
-      return;
+  function openRaiseIssueForm() {
+    window._encatch.showForm(raiseIssueFormId);
+  }
+
+  function getFeedbackArea() {
+    var thumbsUp = document.getElementById("feedback-thumbs-up");
+    if (!thumbsUp) {
+      return null;
     }
 
-    element.dataset.encatchRaiseIssueBound = "true";
-    element.addEventListener(
-      "click",
-      function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        window._encatch.showForm(raiseIssueFormId);
-      },
-      true
+    var pagination = document.getElementById("pagination");
+    if (pagination && pagination.previousElementSibling && pagination.previousElementSibling.contains(thumbsUp)) {
+      return pagination.previousElementSibling;
+    }
+
+    return (
+      thumbsUp.closest("feedback-toolbar") ||
+      thumbsUp.closest(".feedback-toolbar") ||
+      thumbsUp.parentElement
     );
   }
 
-  function attachRaiseIssueButton() {
-    bindRaiseIssueClick(document.getElementById("feedback-raise-issue"));
+  function isRaiseIssueControl(element) {
+    if (!element || !(element instanceof Element)) {
+      return false;
+    }
 
-    var toolbar = document.querySelector("feedback-toolbar");
-    if (!toolbar) {
+    var control = element.closest("a, button");
+    if (!control) {
+      return false;
+    }
+
+    var feedbackArea = getFeedbackArea();
+    if (!feedbackArea || !feedbackArea.contains(control)) {
+      return false;
+    }
+
+    var label = (control.textContent || "").trim().toLowerCase();
+    var href = (control.getAttribute("href") || "").trim().toLowerCase();
+
+    return label.indexOf("raise issue") !== -1 || href.indexOf("/issues/new") !== -1;
+  }
+
+  function blockRaiseIssueNavigation(event) {
+    if (!isRaiseIssueControl(event.target)) {
       return;
     }
 
-    var links = toolbar.querySelectorAll("a, button");
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    openRaiseIssueForm();
+  }
+
+  function neutralizeRaiseIssueLinks() {
+    var feedbackArea = getFeedbackArea();
+    if (!feedbackArea) {
+      return;
+    }
+
+    var links = feedbackArea.querySelectorAll("a");
     for (var i = 0; i < links.length; i++) {
-      var label = (links[i].textContent || "").trim().toLowerCase();
-      if (label.indexOf("issue") !== -1) {
-        bindRaiseIssueClick(links[i]);
+      var link = links[i];
+      var label = (link.textContent || "").trim().toLowerCase();
+      var href = (link.getAttribute("href") || "").trim().toLowerCase();
+
+      if (label.indexOf("raise issue") === -1 && href.indexOf("/issues/new") === -1) {
+        continue;
       }
+
+      link.removeAttribute("target");
+      link.setAttribute("href", "#");
+      link.dataset.encatchRaiseIssueBound = "true";
     }
   }
 
-  attachRaiseIssueButton();
-  new MutationObserver(attachRaiseIssueButton).observe(document.body, {
+  document.addEventListener("click", blockRaiseIssueNavigation, true);
+  document.addEventListener("pointerdown", blockRaiseIssueNavigation, true);
+
+  neutralizeRaiseIssueLinks();
+  new MutationObserver(neutralizeRaiseIssueLinks).observe(document.body, {
     childList: true,
     subtree: true,
   });
