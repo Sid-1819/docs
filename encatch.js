@@ -1,8 +1,6 @@
 (function () {
-  var c = window.__ENCATCH_CONFIG__ || {};
-  var apiKey = c.apiKey;
-  var formId = c.raiseIssueFormId;
-  if (!apiKey || !formId) return;
+  var apiKey = "en_VYxbSw6TbZySXeBWmBKW97KgUNTnYjN4xyfqlP5wXzfMJGqEKG7tGhy3PnIVgjMxTJEHhvg6F1d_beb74374";
+  var formId = "encatch_raise_issue";
 
   function start() {
     window._encatch.init(apiKey);
