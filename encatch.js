@@ -1,6 +1,7 @@
 (function () {
   var apiKey = "en_VYxbSw6TbZySXeBWmBKW97KgUNTnYjN4xyfqlP5wXzfMJGqEKG7tGhy3PnIVgjMxTJEHhvg6F1d_beb74374";
-  var formId = "encatch_raise_issue";
+  var raiseIssueFormId = "encatch_raise_issue";
+  var suggestEditFormId = "encatch_suggest_an_edit";
 
   function start() {
     window._encatch.init(apiKey);
@@ -8,7 +9,23 @@
       "click",
       function (e) {
         var a = e.target.closest("a");
-        if (!a || a.href.indexOf("/issues/new") === -1) return;
+        if (!a) return;
+
+        var href = (a.getAttribute("href") || "").toLowerCase();
+        var label = (a.textContent || "").trim().toLowerCase();
+        var formId = null;
+
+        if (href.indexOf("/issues/new") !== -1 || label.indexOf("raise issue") !== -1) {
+          formId = raiseIssueFormId;
+        } else if (
+          (href.indexOf("github.com") !== -1 && href.indexOf("/edit/") !== -1) ||
+          label.indexOf("suggest edit") !== -1
+        ) {
+          formId = suggestEditFormId;
+        }
+
+        if (!formId) return;
+
         e.preventDefault();
         e.stopImmediatePropagation();
         window._encatch.showForm(formId);
