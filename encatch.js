@@ -6,34 +6,33 @@
 
   var config = window.__ENCATCH_CONFIG__ || {};
   var apiKey = (config.apiKey || "").trim();
-  var formId = (config.feedbackFormId || "").trim();
+  var raiseIssueFormId = (config.raiseIssueFormId || config.feedbackFormId || "").trim();
 
-  if (!apiKey || !formId) {
+  if (!apiKey || !raiseIssueFormId) {
     return;
   }
 
   window._encatch.init(apiKey);
 
-  function bindClick(element) {
-    if (!element || element.dataset.encatchBound === "true") {
+  function bindRaiseIssueClick(element) {
+    if (!element || element.dataset.encatchRaiseIssueBound === "true") {
       return;
     }
 
-    element.dataset.encatchBound = "true";
+    element.dataset.encatchRaiseIssueBound = "true";
     element.addEventListener(
       "click",
       function (event) {
         event.preventDefault();
         event.stopPropagation();
-        window._encatch.showForm(formId);
+        window._encatch.showForm(raiseIssueFormId);
       },
       true
     );
   }
 
-  function attachFeedbackButtons() {
-    bindClick(document.getElementById("feedback-thumbs-up"));
-    bindClick(document.getElementById("feedback-thumbs-down"));
+  function attachRaiseIssueButton() {
+    bindRaiseIssueClick(document.getElementById("feedback-raise-issue"));
 
     var toolbar = document.querySelector("feedback-toolbar");
     if (!toolbar) {
@@ -42,12 +41,15 @@
 
     var links = toolbar.querySelectorAll("a, button");
     for (var i = 0; i < links.length; i++) {
-      bindClick(links[i]);
+      var label = (links[i].textContent || "").trim().toLowerCase();
+      if (label.indexOf("issue") !== -1) {
+        bindRaiseIssueClick(links[i]);
+      }
     }
   }
 
-  attachFeedbackButtons();
-  new MutationObserver(attachFeedbackButtons).observe(document.body, {
+  attachRaiseIssueButton();
+  new MutationObserver(attachRaiseIssueButton).observe(document.body, {
     childList: true,
     subtree: true,
   });

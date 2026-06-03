@@ -5,6 +5,6 @@
  * Allowed Domains / Packages before deploying.
  */
 window.__ENCATCH_CONFIG__ = {
-  apiKey: "en_ZpxFYxWNRfLOlLSmHyALH2s1k4nZranaAOoIooN7MArwOB07zHD0uAZUIzOeCFhzpAK7PyLYVQRCUrL_a3762930",
-  feedbackFormId: "e144c039-f7c8-4cea-bd79-74179d961cb8",
+  apiKey: "en_VYxbSw6TbZySXeBWmBKW97KgUNTnYjN4xyfqlP5wXzfMJGqEKG7tGhy3PnIVgjMxTJEHhvg6F1d_beb74374",
+  raiseIssueFormId: "encatch_raise_issue",
 };
