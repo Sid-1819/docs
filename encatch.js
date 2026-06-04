@@ -4,15 +4,28 @@
   var suggestEditFormId = "encatch_suggest_an_edit";
   var helpfulFormId = "helpful_documentation_choice";
 
+  function showHelpfulForm(isHelpful) {
+    window._encatch.addToResponse("page_url", window.location.href);
+    window._encatch.addToResponse("helpful_question_choice", isHelpful ? "yes" : "no");
+    window._encatch.showForm(helpfulFormId);
+  }
+
   function start() {
     window._encatch.init(apiKey);
     document.addEventListener(
       "click",
       function (e) {
-        if (e.target.closest("#feedback-thumbs-up, #feedback-thumbs-down")) {
+        if (e.target.closest("#feedback-thumbs-up")) {
           e.preventDefault();
           e.stopImmediatePropagation();
-          window._encatch.showForm(helpfulFormId);
+          showHelpfulForm(true);
+          return;
+        }
+
+        if (e.target.closest("#feedback-thumbs-down")) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          showHelpfulForm(false);
           return;
         }
 
