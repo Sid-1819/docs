@@ -4,10 +4,14 @@
   var suggestEditFormId = "encatch_suggest_an_edit";
   var helpfulFormId = "helpful_documentation_choice";
 
-  function showHelpfulForm(isHelpful) {
+  function showFormWithPageUrl(formId) {
     window._encatch.addToResponse("page_url", window.location.href);
+    window._encatch.showForm(formId);
+  }
+
+  function showHelpfulForm(isHelpful) {
     window._encatch.addToResponse("helpful_question_choice", isHelpful ? "yes" : "no");
-    window._encatch.showForm(helpfulFormId);
+    showFormWithPageUrl(helpfulFormId);
   }
 
   function start() {
@@ -49,7 +53,7 @@
 
         e.preventDefault();
         e.stopImmediatePropagation();
-        window._encatch.showForm(formId);
+        showFormWithPageUrl(formId);
       },
       true
     );
