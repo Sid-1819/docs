@@ -4,14 +4,14 @@
   var suggestEditFormId = "encatch_suggest_an_edit";
   var helpfulFormId = "helpful_documentation_choice";
 
-  function showFormWithPageUrl(formId) {
-    window._encatch.addToResponse("page_url", window.location.href);
+  function showFormWithUrl(formId, urlSlug) {
+    window._encatch.addToResponse(urlSlug, window.location.href);
     window._encatch.showForm(formId);
   }
 
   function showHelpfulForm(isHelpful) {
     window._encatch.addToResponse("helpful_question_choice", isHelpful ? "yes" : "no");
-    showFormWithPageUrl(helpfulFormId);
+    showFormWithUrl(helpfulFormId, "page_url");
   }
 
   function start() {
@@ -39,21 +39,24 @@
         var href = (a.getAttribute("href") || "").toLowerCase();
         var label = (a.textContent || "").trim().toLowerCase();
         var formId = null;
+        var urlSlug = null;
 
         if (href.indexOf("/issues/new") !== -1 || label.indexOf("raise issue") !== -1) {
           formId = raiseIssueFormId;
+          urlSlug = "page_url";
         } else if (
           (href.indexOf("github.com") !== -1 && href.indexOf("/edit/") !== -1) ||
           label.indexOf("suggest edit") !== -1
         ) {
           formId = suggestEditFormId;
+          urlSlug = "documentation_url";
         }
 
         if (!formId) return;
 
         e.preventDefault();
         e.stopImmediatePropagation();
-        showFormWithPageUrl(formId);
+        showFormWithUrl(formId, urlSlug);
       },
       true
     );
