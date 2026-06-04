@@ -5,17 +5,17 @@
   var helpfulFormId = "helpful_documentation_choice";
 
   function showFormWithUrl(formId, urlSlug) {
-    window._encatch.addToResponse(urlSlug, window.location.href);
-    window._encatch.showForm(formId);
+    _encatch.addToResponse(urlSlug, window.location.href);
+    _encatch.showForm(formId);
   }
 
   function showHelpfulForm(isHelpful) {
-    window._encatch.addToResponse("helpful_question_choice", isHelpful ? "yes" : "no");
+    _encatch.addToResponse("helpful_question_choice", isHelpful ? "yes" : "no");
     showFormWithUrl(helpfulFormId, "page_url");
   }
 
   function start() {
-    window._encatch.init(apiKey);
+    _encatch.init(apiKey);
     document.addEventListener(
       "click",
       function (e) {
